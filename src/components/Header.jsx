@@ -65,17 +65,17 @@ const Header = () => {
         <div className={`hidden md:flex space-x-9`}>
           {isLoggedIn ? (
             <>
-              <Link to={`/`}><a className="text-gray-700 font-bold">Home</a></Link>
-              <Link to={`/medicalreport`}><a className="text-gray-700 font-bold">Report</a></Link>
-              <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold">Healthcare-Plan</a></Link>
-              <Link to={`/dashboard`}><a className="text-gray-700 font-bold">Dashboard</a></Link>
+              <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
+              <Link to={`/medicalreport`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
+              <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
+              <Link to={`/dashboard`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
             </>
           ) : (
             <>
-              <Link to={`/`}><a className="text-gray-700 font-bold">Home</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold">Report</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold">Healthcare-Plan</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold">Dashboard</a></Link>
+              <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
+              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
+              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
+              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
             </>
           )}
         </div>
@@ -104,17 +104,17 @@ const Header = () => {
           <div className="absolute top-16 left-0 w-full bg-pink-100 flex flex-col items-center space-y-4 py-4 z-50 md:hidden">
             {isLoggedIn ? (
               <>
-                <Link to={`/`}><a className="text-gray-700 font-bold">Home</a></Link>
-                <Link to={`/medicalreport`}><a className="text-gray-700 font-bold">Report</a></Link>
-                <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold">Healthcare-Plan</a></Link>
-                <Link to={`/dashboard`}><a className="text-gray-700 font-bold">Dashboard</a></Link>
+                <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
+                <Link to={`/medicalreport`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
+                <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
+                <Link to={`/dashboard`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
               </>
             ) : (
               <>
-                <Link to={`/`}><a className="text-gray-700 font-bold">Home</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold">Report</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold">Healthcare-Plan</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold">Dashboard</a></Link>
+                <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
+                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
+                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
+                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
               </>
             )}
             {isLoggedIn && user ? (

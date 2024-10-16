@@ -1,0 +1,52 @@
+    /* heart banner */
+  .heartbeat-animation {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: heartbeat-draw 2s ease-in-out infinite, heartbeat-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat-draw {
+    0% {
+      stroke-dashoffset: 200;
+    }
+    50% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 200;
+    }
+  }
+
+  @keyframes heartbeat-pulse {
+    0%, 100% {
+      stroke-width: 2;
+    }
+    50% {
+      stroke-width: 4;
+    }
+  }
+
+  /* Stats banner */
+
+  .heartbeat-animation {
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes heartbeat {
+    0% {
+      stroke-dasharray: 0, 100; /* Start with no stroke */
+    }
+    25% {
+      stroke-dasharray: 50, 100; /* Partial stroke */
+    }
+    50% {
+      stroke-dasharray: 100, 100; /* Full stroke */
+    }
+    75% {
+      stroke-dasharray: 50, 100; /* Partial stroke */
+    }
+    100% {
+      stroke-dasharray: 0, 100; /* Back to no stroke */
+    }
+  }
+  

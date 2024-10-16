@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import About from '../components/AboutUs';
 import Services from '../components/Services';
 import HealthSection from '../components/HeartBanner';
+import StatisticsBanner from '../components/StatisticsBanner';
 import { useNavigate, Link } from 'react-router-dom';
 
 const HomePage = () => {
@@ -68,11 +69,17 @@ const HomePage = () => {
             <p className="text-lg">Log in to upload your medical report and experience AI-driven insights and personalized health suggestions.</p>
           </div>
         )}
-      </div>
+        </div>
 
-      <HealthSection />
-        {/* Statistics Section */}
-        <section className="bg-purple-600 py-12 text-white text-center">
+        {/* Health Banner */}
+        <HealthSection />
+   
+        {/* Services Section */}
+        <Services />
+
+        {/* Statistics Banner */}
+        <StatisticsBanner />
+        {/* <section className="bg-purple-600 py-12 text-white text-center">
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h2 className="text-3xl font-bold">10,000+</h2>
@@ -87,13 +94,10 @@ const HomePage = () => {
               <p className="mt-2">User Satisfaction</p>
             </div>
           </div>
-        </section>
-
+        </section> */}
         
-
         {/* Additional Sections */}
         <About />
-        <Services />
 
         {/* Footer */}
         <Footer />

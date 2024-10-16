@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
 import Logo from '../assets/medcap_logo.png'; // Adjust path based on your structure
 import Header from '../components/Header'; // Assuming you have the same Header component
+import Footer from '../components/Footer';
+import HealthSection from '../components/HeartBanner';
 import serverUrl from '../components/server_url'; // Assuming you have a server URL configuration
 import { useNavigate, Link } from 'react-router-dom'; // Import useNavigate
 
@@ -59,7 +61,7 @@ const LoginPage = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 md:px-12 py-12 flex flex-col md:flex-row items-center"> {/* Set px-4 for mobile */}
+      <main className="flex-grow container mx-auto px-4 md:px-12 py-12 md:py-32 flex flex-col md:flex-row items-center"> {/* Set px-4 for mobile */}
         <div className="w-full md:w-1/2 flex justify-center mb-8 md:mb-0">
           <div className="relative w-48 h-48 md:w-64 md:h-64">
             <div className="bg-[#F8CDEA] w-full h-full rounded-full"></div>
@@ -128,7 +130,8 @@ const LoginPage = () => {
       </main>
 
       {/* Statistics */}
-      <div className="bg-purple-500 py-8 px-4 md:px-12"> {/* Adjusted padding */}
+      <HealthSection />
+      {/* <div className="bg-purple-500 py-8 px-4 md:px-12">
         <div className="container mx-auto flex flex-col md:flex-row justify-between text-white text-center">
           <div className="mb-4 md:mb-0">
             <div className="text-3xl md:text-4xl font-bold">10k+</div>
@@ -143,7 +146,9 @@ const LoginPage = () => {
             <div>Uptime</div>
           </div>
         </div>
-      </div>
+      </div> */}
+
+      <Footer />
     </div>
   );
 };

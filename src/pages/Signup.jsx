@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
 import Logo from '../assets/medcap_logo.png'; // Adjust path based on your structure
 import Header from '../components/Header'; // Assuming the same Header component is used
+import StatisticsBanner from '../components/StatisticsBanner';
 import serverUrl from '../components/server_url';
 import { useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -318,7 +319,8 @@ const SignupPage = () => {
       </main>
 
       {/* Statistics */}
-      <div className="bg-purple-500 py-8 px-12">
+      <StatisticsBanner />
+      {/* <div className="bg-purple-500 py-8 px-12">
         <div className="container mx-auto flex justify-between text-white text-center">
           <div>
             <div className="text-4xl font-bold">15k+</div>
@@ -333,7 +335,7 @@ const SignupPage = () => {
             <div>Support Agents</div>
           </div>
         </div>
-      </div>
+      </div> */}
       <Footer/>
     </div>
   );
