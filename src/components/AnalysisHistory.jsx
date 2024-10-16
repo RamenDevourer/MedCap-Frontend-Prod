@@ -44,10 +44,15 @@ const AnalysisHistory = ({ history }) => {
   };
 
   const getAttachedFileContent = (report) => {
-    let fileContent = report.match(/Attached file content:(.*)/)?.[1] || 'No file content available';
-    if (fileContent.includes("undefined")){
+    let fileContent = report.match(/Attached file content:[\s\S]*/)?.[0] || 'No file content available';
+    
+    // Remove the prefix "Attached file content:" from the result
+    fileContent = fileContent.replace("Attached file content:", "").trim();
+  
+    if (fileContent.includes("undefined")) {
       fileContent = "No attached files";
     }
+    
     return fileContent;
   };
 
