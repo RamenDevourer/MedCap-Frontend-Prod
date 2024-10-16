@@ -20,7 +20,7 @@ const SignupPage = () => {
     phone: '',     // New field
     height: '',    // New field
     weight: '',    // New field
-    profilePicture: null 
+    profilePicture: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" 
   });
 
   const [error, setError] = useState(null);
@@ -68,7 +68,7 @@ const SignupPage = () => {
         phone: '',     // Clear new field
         height: '',    // Clear new field
         weight: '',    // Clear new field
-        profilePicture: null // Reset profile picture field
+        profilePicture: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" // Reset profile picture field
       });
 
       navigate('/login');
