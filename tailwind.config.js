@@ -1,5 +1,7 @@
 // tailwind.config.js
-module.exports = {
+import { Flowbite } from 'flowbite-react'
+
+export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}"
@@ -8,6 +10,6 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require('flowbite/plugin')
+    Flowbite
   ],
 }

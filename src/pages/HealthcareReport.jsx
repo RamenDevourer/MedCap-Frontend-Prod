@@ -25,6 +25,9 @@ const HealthPlanDashboard = () => {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       setMedicalReports(response.data.medicalReports);
+      if (response.data.medicalReports.length == 0){
+        throw  new Error("Please submit a medical report first!");
+      } 
       const latestReport = response.data.medicalReports.reduce((latest, report) => {
         return new Date(report.createdAt) > new Date(latest.createdAt) ? report : latest;
       }, response.data.medicalReports[0]);
@@ -34,8 +37,42 @@ const HealthPlanDashboard = () => {
       setLoading(false);
     } catch (error) {
       setIsError(true);
-      setLoaderMessage("Something went wrong!");
-      console.error('Error fetching medical reports:', error);
+      if (error.message == "Please submit a medical report first!"){
+        setLoaderMessage("Please submit a medical report first!");
+        console.error('Error fetching medical reports:', error);
+
+        // redirect after 5 seconds
+        let countdown = 5;
+        setLoaderMessage(`Please submit a medical report first!\nRedirecting in ${countdown}...`);
+        
+        const interval = setInterval(() => {
+          countdown -= 1;
+          if (countdown > 0) {
+            setLoaderMessage(`Please submit a medical report first!\nRedirecting in ${countdown}...`);
+          } else {
+            clearInterval(interval);
+            window.location.href = "/medicalreport";
+          }
+        }, 1000);
+      }
+      else{
+        setLoaderMessage("Something went wrong!");
+        console.error('Error fetching medical reports:', error);
+
+        // redirecting after 5 seconds
+        let countdown = 5;
+        setLoaderMessage(`Something went wrong!\nRedirecting in ${countdown}...`);
+        
+        const interval = setInterval(() => {
+          countdown -= 1;
+          if (countdown > 0) {
+            setLoaderMessage(`Something went wrong!\nRedirecting in ${countdown}...`);
+          } else {
+            clearInterval(interval);
+            window.location.href = "/";
+          }
+        }, 1000);
+      }
     }
   };
 

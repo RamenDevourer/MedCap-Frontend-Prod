@@ -101,7 +101,7 @@ const Footer = () => {
             <IconButton sx={{ color: 'white', margin: '0 5px' }}><LinkedIn fontSize="small" /></IconButton>
           </div>
           <Typography variant="body2" sx={{ marginTop: 2 }}>
-            © 2024 MedCap. All rights reserved.
+            © 2025 MedCap. All rights reserved.
           </Typography>
         </Box>
       </Container>

@@ -170,6 +170,20 @@ const MedicalReportForm = () => {
       console.error('Error submitting report:', error);
       setError(true);
       setErrorMessage('An error occurred. Please try again.');
+
+      // redirect after 5 seconds
+      let countdown = 5;
+      setErrorMessage(`An error occurred. Please try again.\nRedirecting in ${countdown}...`);
+      
+      const interval = setInterval(() => {
+        countdown -= 1;
+        if (countdown > 0) {
+          setErrorMessage(`An error occurred. Please try again.\nRedirecting in ${countdown}...`);
+        } else {
+          clearInterval(interval);
+          window.location.href = "/";
+        }
+      }, 1000);
     } finally {
       setLoading(false);
     }
