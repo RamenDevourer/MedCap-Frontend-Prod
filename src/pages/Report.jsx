@@ -82,6 +82,20 @@ const MedicalReportForm = () => {
         console.error('Error fetching user data:', err);
         setError(true);
         setErrorMessage('Failed to load user data.');
+
+        // redirect after 5 seconds
+        let countdown = 5;
+        setErrorMessage(`Failed to load user data.\nPlease Login again ${countdown}...`);
+        
+        const interval = setInterval(() => {
+          countdown -= 1;
+          if (countdown > 0) {
+            setErrorMessage(`Failed to load user data.\nPlease Login again ${countdown}...`);
+          } else {
+            clearInterval(interval);
+            window.location.href = "/login";
+          }
+        }, 1000);
       })
       .finally(() => {
         setLoadingData(false);
