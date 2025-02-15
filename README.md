@@ -1,8 +1,10 @@
-# React + Vite
+# MedCap
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+AIPowered Healthcare Analysis Platform
+- Developed an innovative healthcare platform that analyzes PDF medical reports,
+generating personalized healthcare plans using AI technology.
+- Implemented user profiles featuring dashboards and report history access, ensuring
+secure login via JWT and profile picture management with Firebase.
+- Enhanced user experience by tracking and analyzing past data to provide improved
+recommendations over time.
+- website link: https://medcap.vercel.app/
