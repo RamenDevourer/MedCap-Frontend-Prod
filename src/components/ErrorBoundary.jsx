@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import PageShell from './ui/PageShell';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -6,17 +8,31 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch(error, info) {
-    console.error("Error boundary caught an error: ", error);
+  componentDidCatch(error) {
+    console.error('Error boundary caught an error: ', error);
   }
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <PageShell>
+          <div className="container grid min-h-[60vh] place-items-center py-20 text-center">
+            <div className="max-w-md">
+              <p className="eyebrow">Something broke</p>
+              <h1 className="mt-3 text-4xl font-medium">We couldn&apos;t load this page.</h1>
+              <p className="mt-4 text-ink-soft">Refresh to try again, or head back to your dashboard.</p>
+              <div className="mt-8 flex justify-center gap-2">
+                <button className="btn-ghost" onClick={() => window.location.reload()}>Refresh</button>
+                <Link className="btn-primary" to="/dashboard">Go to dashboard</Link>
+              </div>
+            </div>
+          </div>
+        </PageShell>
+      );
     }
 
     return this.props.children;

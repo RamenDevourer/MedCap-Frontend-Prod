@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { PencilLine, LogOut, FilePlus2, HeartPulse } from 'lucide-react';
 import AnalysisHistory from '../components/AnalysisHistory';
 import UserDetails from '../components/UserDetails';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import EditProfileForm from '../components/EditProfileForm';
 import serverUrl from '../components/server_url';
-import LoadingPopup from '../components/LoadingPopup'; // Import the LoadingPopup component
+import LoadingPopup from '../components/LoadingPopup';
+import PageShell, { PageIntro } from '../components/ui/PageShell';
+import Avatar from '../components/ui/Avatar';
+import { clearSession } from '../lib/session';
+
+const greeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+};
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
@@ -28,13 +37,10 @@ const UserDashboard = () => {
         }
 
         const response = await axios.get(`${serverUrl}/api/auth/secure`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const { user, medicalReports } = response.data;
-        console.log(medicalReports);
         setUser(user);
         setAnalysisHistory(medicalReports);
       } catch (error) {
@@ -49,72 +55,73 @@ const UserDashboard = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    localStorage.setItem('loggedIn', 'false');
+    clearSession();
     navigate('/login');
   };
 
-  const handleUpdateUser = (updatedUser) => {
-    setUser(updatedUser); // Update the user state with the new data
-  };
+  const handleUpdateUser = (updatedUser) => setUser(updatedUser);
 
+  if (loading || !user) {
+    return (
+      <PageShell>
+        <div className="min-h-[60vh]" />
+        {loading && <LoadingPopup message="Loading your dashboard…" />}
+      </PageShell>
+    );
+  }
+
+  const count = Array.isArray(analysisHistory) ? analysisHistory.length : 0;
 
   return (
-    <>
-      <Header />
-      {loading ? (
-        <LoadingPopup />
-      ) : (
-        <>
-          <div className="min-h-screen px-4 md:px-8 py-8">
-            <div className="max-w-4xl mx-auto bg-pink-50 rounded-lg shadow-lg overflow-hidden">
-              <h1 className="text-3xl font-bold text-center py-6 bg-pink-200 text-gray-800">User Dashboard</h1>
+    <PageShell>
+      <div className="container py-10 md:py-14">
+        <PageIntro
+          eyebrow="Dashboard"
+          title={`${greeting()}, ${user.firstName}.`}
+          actions={
+            <>
+              <Link to="/healthcareplan" className="btn-ghost"><HeartPulse size={16} /> My plan</Link>
+              <Link to="/medicalreport" className="btn-brand"><FilePlus2 size={16} /> New report</Link>
+            </>
+          }
+        >
+          {count
+            ? `You have ${count} ${count === 1 ? 'analysis' : 'analyses'} on file. Open any of them to see the details.`
+            : 'Upload your first report to get a personal health plan.'}
+        </PageIntro>
 
-              <div className="p-6 px-0 md:px-6">
-                <div className="mb-8 text-center">
-                  <img 
-                    src={user.profilePicture || "/api/placeholder/150/150"} 
-                    alt="Profile" 
-                    className="w-36 h-36 rounded-full mx-auto bg-gray-300"
-                  />
-                  <h2 className="text-xl font-semibold mb-2">{`${user.firstName} ${user.lastName}`}</h2>
-                  <p className="text-gray-600 mb-4">{user.dateOfBirth}</p>
-                  <button 
-                    className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition duration-300"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit Profile
-                  </button><br/>
-                  <button 
-                    className="bg-red-600 text-white mt-2 px-4 py-2 rounded-full hover:bg-red-700 transition duration-300"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </div>
-                
-                <div className="space-y-8">
-                  <UserDetails user={user} />
-                  <AnalysisHistory history={analysisHistory} />
-                </div>
+        <div className="mt-10 grid items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
+          <aside className="card p-6 lg:sticky lg:top-24">
+            <div className="flex items-center gap-4">
+              <Avatar user={user} size="lg" />
+              <div className="min-w-0">
+                <h2 className="truncate text-2xl font-medium">{`${user.firstName} ${user.lastName}`}</h2>
+                <p className="truncate text-sm text-ink-soft">{user.email}</p>
               </div>
-
-              
             </div>
-          </div>
 
-          {isEditing && (
-            <EditProfileForm 
-              user={user}
-              onClose={() => setIsEditing(false)}
-              onUpdate={handleUpdateUser}
-            />
-          )}
-        </>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <button className="btn-ghost px-3" onClick={() => setIsEditing(true)}>
+                <PencilLine size={16} /> Edit
+              </button>
+              <button className="btn-danger px-3" onClick={handleLogout}>
+                <LogOut size={16} /> Log out
+              </button>
+            </div>
+
+            <div className="mt-7 border-t border-line pt-6">
+              <UserDetails user={user} />
+            </div>
+          </aside>
+
+          <AnalysisHistory history={analysisHistory} />
+        </div>
+      </div>
+
+      {isEditing && (
+        <EditProfileForm user={user} onClose={() => setIsEditing(false)} onUpdate={handleUpdateUser} />
       )}
-      <Footer />
-    </>
+    </PageShell>
   );
 };
 

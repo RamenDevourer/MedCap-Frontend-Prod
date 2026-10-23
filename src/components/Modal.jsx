@@ -1,27 +1,48 @@
-import React from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { X } from 'lucide-react';
 
-const Modal = ({ onClose, title, children }) => {
-  const handleOverlayClick = (event) => {
-    if (event.target === event.currentTarget) {
-      onClose(); // Close the modal if the overlay is clicked
-    }
-  };
+const Modal = ({ onClose, title, eyebrow, children, size = 'md', footer }) => {
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const width = size === 'lg' ? 'max-w-2xl' : 'max-w-lg';
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={handleOverlayClick} // Add click event to overlay
+    <div
+      className="fixed inset-0 z-50 flex animate-fade items-end justify-center bg-ink/40 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
     >
-      <div className="bg-white rounded-lg p-6 max-w-md w-full relative">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
-        <button 
-          onClick={onClose} 
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-        >
-          ✖
-        </button>
-        <div className="max-h-80 overflow-y-auto p-6">{children}</div> {/* Added scrollable area */}
+      <div
+        className={`flex max-h-[92vh] w-full ${width} animate-pop flex-col overflow-hidden rounded-t-3xl bg-paper shadow-lift sm:rounded-3xl`}
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-line px-6 pb-4 pt-6">
+          <div>
+            {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+            <h2 className="mt-1 text-2xl font-medium">{title}</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line bg-white text-ink-soft transition hover:text-ink"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="overflow-y-auto px-6 py-5">{children}</div>
+        {footer && <div className="border-t border-line bg-paper-2/60 px-6 py-4">{footer}</div>}
       </div>
     </div>
   );
@@ -30,7 +51,10 @@ const Modal = ({ onClose, title, children }) => {
 Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
+  eyebrow: PropTypes.string,
   children: PropTypes.node.isRequired,
+  size: PropTypes.oneOf(['md', 'lg']),
+  footer: PropTypes.node,
 };
 
 export default Modal;

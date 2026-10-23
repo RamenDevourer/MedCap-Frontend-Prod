@@ -1,37 +1,36 @@
-import React from 'react';
-import { XCircleIcon } from '@heroicons/react/solid'; // Import an error icon (you can use any icon library or your own SVG)
-import '../custom-css/loader.css';
+import { AlertTriangle } from 'lucide-react';
+import EcgLine from './ui/EcgLine';
 
-const LoadingPopup = ({ message = "Loading...", error = false }) => {
-  return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-      {/* Invisible SVG filter definition for gooey effect */}
-      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-        <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="12"></feGaussianBlur>
-          <feColorMatrix
-            values="0 0 0 0 1 
-                    0 0 0 0 0.5 
-                    0 0 0 0 0.5 
-                    0 0 0 48 -7"
-          ></feColorMatrix>
-        </filter>
-      </svg>
+// Full-screen status overlay. Same props as before (message, error), plus
+// optional onClose / closeLabel so error states can be dismissed, and an
+// optional detail line (e.g. a redirect countdown).
+const LoadingPopup = ({ message = 'Loading…', error = false, onClose, closeLabel = 'Try again', detail }) => (
+  <div className="fixed inset-0 z-50 grid animate-fade place-items-center bg-ink/35 p-6 backdrop-blur-sm" role="status" aria-live="polite">
+    <div className="w-full max-w-sm animate-pop rounded-3xl border border-line bg-paper p-8 text-center shadow-lift">
+      {error ? (
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-rose-50 text-rose-500">
+          <AlertTriangle size={26} />
+        </div>
+      ) : (
+        <div className="chart-grid relative mx-auto h-20 overflow-hidden rounded-2xl border border-line bg-white">
+          <EcgLine className="absolute inset-0 h-full w-[200%] text-brand-500" animate={false} width={2} />
+          <div className="absolute inset-y-0 left-0 w-full animate-sweep bg-gradient-to-r from-transparent via-white to-white" />
+          <span className="absolute right-3 top-3 h-2 w-2 animate-pulseDot rounded-full bg-brand-500" />
+        </div>
+      )}
 
-      {/* Loader or Error */}
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center w-80 h-80 flex flex-col items-center justify-center">
-        {error ? (
-          // Error animation or icon
-          <XCircleIcon className="h-16 w-16 text-red-500 mb-4" /> // Using HeroIcons as an example
-        ) : (
-          // Loader animation if no error
-          <div className="loader"></div>
-        )}
-        {/* Show either loading or error message */}
-        <p className="text-xl mt-4">{message}</p>
-      </div>
+      <p className="mt-6 font-display text-xl text-ink">{message}</p>
+      {(detail || !error) && (
+        <p className="mt-2 text-sm text-ink-soft">{detail || 'This usually takes a few seconds.'}</p>
+      )}
+
+      {error && onClose && (
+        <button type="button" onClick={onClose} className="btn-primary mt-6 w-full">
+          {closeLabel}
+        </button>
+      )}
     </div>
-  );
-};
+  </div>
+);
 
 export default LoadingPopup;

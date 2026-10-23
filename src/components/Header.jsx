@@ -1,140 +1,138 @@
-import React, { useState, useEffect } from 'react';
-import logo from '../assets/medcap_logo.png';
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import Logo from './ui/Logo';
+import Avatar from './ui/Avatar';
+import { getStoredUser, isLoggedIn as readLoggedIn } from '../lib/session';
+
+const NAV = [
+  { label: 'Home', to: '/', public: true },
+  { label: 'New report', to: '/medicalreport' },
+  { label: 'Health plan', to: '/healthcareplan' },
+  { label: 'Dashboard', to: '/dashboard' },
+];
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    if (localStorage.getItem('loggedIn') === null) {
-      localStorage.setItem('loggedIn', false);
-    }
-
-    let loggedInStatus = localStorage.getItem('loggedIn');
-    const storedUser = localStorage.getItem('user');
-
-    if (loggedInStatus === 'true' && storedUser) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(storedUser)); // Parse the user data from localStorage
-    }
+    if (localStorage.getItem('loggedIn') === null) localStorage.setItem('loggedIn', false);
+    const status = readLoggedIn();
+    setLoggedIn(status);
+    setUser(status ? getStoredUser() : null);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => setOpen(false), [pathname]);
 
-  const handleProfileClick = () => {
-    navigate('/dashboard');
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Logged-out visitors are sent to /login for protected pages, as before.
+  const target = (item) => (item.public || loggedIn ? item.to : '/login');
+
+  // A protected link that points to /login shouldn't light up on the login page.
+  const active = (item, isActive) => isActive && (item.public || loggedIn);
+
+  const linkClass = (item) => ({ isActive }) =>
+    `relative rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors ${
+      active(item, isActive) ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-ink/5 hover:text-ink'
+    }`;
 
   return (
-    <header className="bg-pink-100 p-4">
-      <nav className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to={'/'}>
-          <div className="flex items-center">
-            <img src={logo} alt="MedCap Logo" className="w-10 h-10 mr-2 rounded-full" />
-            <span className="text-xl font-bold">MedCap</span>
-          </div>
-        </Link>
+    <header
+      className={`sticky top-0 z-40 transition-[background,box-shadow,border-color] duration-300 ${
+        scrolled || open
+          ? 'border-b border-line bg-paper/85 shadow-[0_8px_24px_-20px_rgba(26,22,51,0.35)] backdrop-blur-xl'
+          : 'border-b border-transparent bg-paper/0'
+      }`}
+    >
+      <nav className="container flex h-[68px] items-center justify-between gap-6">
+        <Logo />
 
-        {/* Hamburger Icon for Small Screens */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-gray-700 focus:outline-none">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}
-              />
-            </svg>
-          </button>
+        <div className="hidden items-center gap-1 md:flex">
+          {NAV.map((item) => (
+            <NavLink key={item.label} to={target(item)} end={item.to === '/'} className={linkClass(item)}>
+              {item.label}
+            </NavLink>
+          ))}
         </div>
 
-        {/* Nav Links */}
-        <div className={`hidden md:flex space-x-9`}>
-          {isLoggedIn ? (
-            <>
-              <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
-              <Link to={`/medicalreport`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
-              <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
-              <Link to={`/dashboard`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
-            </>
-          ) : (
-            <>
-              <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
-              <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
-            </>
-          )}
-        </div>
-
-        {/* Log In or Dashboard/Profile Picture */}
         <div className="hidden md:block">
-          {isLoggedIn && user ? (
-            <button onClick={handleProfileClick} className="flex items-center">
-              <img
-                src={user.profilePicture}
-                alt="User Profile"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            </button>
-          ) : (
-            <Link to={`/login`}>
-              <button className="bg-pink-400 text-white px-4 py-2 rounded-full font-bold">
-                Log In
-              </button>
+          {loggedIn && user ? (
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2.5 rounded-full border border-line bg-white/70 py-1 pl-1 pr-4 text-sm font-semibold transition hover:border-ink/25 hover:bg-white"
+            >
+              <Avatar user={user} />
+              {user.firstName || 'Account'}
             </Link>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/login" className="btn px-4 text-ink-soft hover:text-ink">
+                Log in
+              </Link>
+              <Link to="/signup" className="btn-primary">
+                Get started <ArrowRight size={16} />
+              </Link>
+            </div>
           )}
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="absolute top-16 left-0 w-full bg-pink-100 flex flex-col items-center space-y-4 py-4 z-50 md:hidden">
-            {isLoggedIn ? (
-              <>
-                <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
-                <Link to={`/medicalreport`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
-                <Link to={`/healthcareplan`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
-                <Link to={`/dashboard`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
-              </>
-            ) : (
-              <>
-                <Link to={`/`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Home</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Report</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Healthcare-Plan</a></Link>
-                <Link to={`/login`}><a className="text-gray-700 font-bold hover:text-pink-500 transition">Dashboard</a></Link>
-              </>
-            )}
-            {isLoggedIn && user ? (
-              <button onClick={handleProfileClick} className="flex items-center">
-                <img
-                  src={user.profilePicture}
-                  alt="User Profile"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              </button>
-            ) : (
-              <Link to={`/login`}>
-                <button className="bg-pink-400 text-white px-4 py-2 rounded-full font-bold">
-                  Log In
-                </button>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="grid h-10 w-10 place-items-center rounded-full border border-line bg-white/70 md:hidden"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </nav>
+
+      {open && (
+        <div className="container animate-fade pb-6 md:hidden">
+          <div className="flex flex-col gap-1 border-t border-line pt-4">
+            {NAV.map((item) => (
+              <NavLink
+                key={item.label}
+                to={target(item)}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `rounded-xl px-4 py-3 text-base font-medium ${
+                    active(item, isActive) ? 'bg-ink text-paper' : 'text-ink hover:bg-ink/5'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+          <div className="mt-4">
+            {loggedIn && user ? (
+              <Link to="/dashboard" className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
+                <Avatar user={user} size="md" />
+                <span>
+                  <span className="block font-semibold">{`${user.firstName ?? ''} ${user.lastName ?? ''}`}</span>
+                  <span className="block text-sm text-ink-soft">View your dashboard</span>
+                </span>
               </Link>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Link to="/login" className="btn-ghost">Log in</Link>
+                <Link to="/signup" className="btn-primary">Get started</Link>
+              </div>
             )}
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </header>
   );
 };
