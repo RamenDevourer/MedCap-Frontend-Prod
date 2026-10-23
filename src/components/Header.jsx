@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ArrowRight, ChevronDown, LayoutDashboard, FilePlus2, LogOut } from 'lucide-react';
 import Logo from './ui/Logo';
 import Avatar from './ui/Avatar';
-import { getStoredUser, isLoggedIn as readLoggedIn } from '../lib/session';
+import { clearSession, getStoredUser, isLoggedIn as readLoggedIn } from '../lib/session';
 
 const NAV = [
   { label: 'Home', to: '/', public: true },
@@ -17,7 +17,19 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    clearSession();
+    setLoggedIn(false);
+    setUser(null);
+    setAccountOpen(false);
+    setOpen(false);
+    navigate('/login');
+  };
 
   useEffect(() => {
     if (localStorage.getItem('loggedIn') === null) localStorage.setItem('loggedIn', false);
@@ -26,7 +38,23 @@ const Header = () => {
     setUser(status ? getStoredUser() : null);
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+    setAccountOpen(false);
+  }, [pathname]);
+
+  // Close the account menu on outside click or Escape.
+  useEffect(() => {
+    if (!accountOpen) return;
+    const onClick = (e) => accountRef.current && !accountRef.current.contains(e.target) && setAccountOpen(false);
+    const onKey = (e) => e.key === 'Escape' && setAccountOpen(false);
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [accountOpen]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -67,13 +95,45 @@ const Header = () => {
 
         <div className="hidden md:block">
           {loggedIn && user ? (
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-2.5 rounded-full border border-line bg-white/70 py-1 pl-1 pr-4 text-sm font-semibold transition hover:border-ink/25 hover:bg-white"
-            >
-              <Avatar user={user} />
-              {user.firstName || 'Account'}
-            </Link>
+            <div className="relative" ref={accountRef}>
+              <button
+                type="button"
+                onClick={() => setAccountOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={accountOpen}
+                className="flex items-center gap-2.5 rounded-full border border-line bg-white/70 py-1 pl-1 pr-3 text-sm font-semibold transition hover:border-ink/25 hover:bg-white"
+              >
+                <Avatar user={user} />
+                {user.firstName || 'Account'}
+                <ChevronDown size={16} className={`text-ink-soft transition-transform ${accountOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {accountOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full mt-2 w-60 animate-pop overflow-hidden rounded-2xl border border-line bg-white p-1.5 shadow-lift"
+                >
+                  <div className="border-b border-line px-3 pb-3 pt-2">
+                    <p className="truncate font-semibold">{`${user.firstName ?? ''} ${user.lastName ?? ''}`}</p>
+                    <p className="truncate text-sm text-ink-soft">{user.email}</p>
+                  </div>
+                  <Link role="menuitem" to="/dashboard" className="mt-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[15px] transition hover:bg-paper-2">
+                    <LayoutDashboard size={17} className="text-ink-soft" /> Dashboard
+                  </Link>
+                  <Link role="menuitem" to="/medicalreport" className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[15px] transition hover:bg-paper-2">
+                    <FilePlus2 size={17} className="text-ink-soft" /> New report
+                  </Link>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={handleSignOut}
+                    className="mt-1 flex w-full items-center gap-2.5 rounded-xl border-t border-line px-3 py-2.5 text-left text-[15px] font-medium text-rose-700 transition hover:bg-rose-50"
+                  >
+                    <LogOut size={17} /> Sign out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link to="/login" className="btn px-4 text-ink-soft hover:text-ink">
@@ -124,6 +184,11 @@ const Header = () => {
                   <span className="block text-sm text-ink-soft">View your dashboard</span>
                 </span>
               </Link>
+            ) : null}
+            {loggedIn && user ? (
+              <button type="button" onClick={handleSignOut} className="btn-danger mt-2 w-full">
+                <LogOut size={16} /> Sign out
+              </button>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 <Link to="/login" className="btn-ghost">Log in</Link>

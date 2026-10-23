@@ -105,7 +105,7 @@ const UserDashboard = () => {
                 <PencilLine size={16} /> Edit
               </button>
               <button className="btn-danger px-3" onClick={handleLogout}>
-                <LogOut size={16} /> Log out
+                <LogOut size={16} /> Sign out
               </button>
             </div>
 
